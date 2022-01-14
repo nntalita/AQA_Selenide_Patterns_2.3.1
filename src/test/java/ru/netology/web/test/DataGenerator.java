@@ -1,4 +1,4 @@
-package ru.netology.web;
+package ru.netology.web.test;
 
 import com.github.javafaker.Faker;
 import com.github.javafaker.PhoneNumber;
