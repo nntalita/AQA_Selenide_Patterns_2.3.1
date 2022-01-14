@@ -22,11 +22,13 @@ public class CardDeliveryFormTest {
         $("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
         String planningDate = generateDate(4);
         $("[data-test-id=date] input").setValue(planningDate);
-        $("[data-test-id=name] input").setValue(dataGenerator.getName());
+//        $("[data-test-id=name] input").setValue(dataGenerator.getName());
+        $("[data-test-id=name] input").setValue(dataGenerator.getLastName() + " " + dataGenerator.getFirstName());
         $("[data-test-id=phone] input").setValue(dataGenerator.getPhone());
         $(".checkbox__box").click();
         $(".button__text").click();
-        $("[data-test-id='success-notification'] [class='notification__title']").shouldHave(text("Успешно"), Duration.ofSeconds(15));
+        $("[data-test-id='success-notification'] [class='notification__title']").shouldHave(text("Успешно"),
+                Duration.ofSeconds(15));
         $(".notification__content").shouldBe(visible, Duration.ofSeconds(15))
                 .shouldHave(text("Встреча успешно запланирована на " + planningDate));
         $("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
