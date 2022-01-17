@@ -1,5 +1,8 @@
 package ru.netology.web.test;
 
+import com.codeborne.selenide.Selenide;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 
@@ -14,10 +17,20 @@ import static com.codeborne.selenide.Selenide.open;
 
 public class CardDeliveryFormTest {
 
+
+    DataGenerator dataGenerator = new DataGenerator();
+
+
+    @BeforeEach
+    void setup() {
+        open("http://localhost:9999");
+    }
+
+
     @Test
     public void shouldFormTest() throws InterruptedException {
-        DataGenerator dataGenerator = new DataGenerator();
-        open("http://localhost:9999");
+
+
         $("[placeholder='Город']").setValue(dataGenerator.getCity());
         $("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
         String planningDate = generateDate(4);
@@ -37,6 +50,29 @@ public class CardDeliveryFormTest {
         $(byText("Перепланировать")).shouldBe(visible, Duration.ofSeconds(15)).click();
         $(".notification__content").shouldBe(visible, Duration.ofSeconds(15))
                 .shouldHave(exactText("Встреча успешно запланирована на " + planningDate));
+    }
+
+    @Test
+    public void shouldFormTestSameDate() throws InterruptedException {
+
+        $("[placeholder='Город']").setValue(dataGenerator.getCity());
+        $("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
+        String planningDate = generateDate(4);
+        $("[data-test-id=date] input").setValue(planningDate);
+        $("[data-test-id=name] input").setValue(dataGenerator.getLastName() + " " + dataGenerator.getFirstName());
+        $("[data-test-id=phone] input").setValue(dataGenerator.getPhone());
+        $(".checkbox__box").click();
+        $(".button__text").click();
+        $("[data-test-id='success-notification'] [class='notification__title']").shouldHave(text("Успешно"),
+                Duration.ofSeconds(15));
+        $(".notification__content").shouldBe(visible, Duration.ofSeconds(15))
+                .shouldHave(text("Встреча успешно запланирована на " + planningDate));
+        $("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
+        planningDate = generateDate(4);
+        $("[data-test-id=date] input").setValue(planningDate);
+        $(".button__text").click();
+        $("[data-test-id=replan-notification] .notification__content")
+                .shouldHave(text("У вас уже запланирована встреча на " + planningDate));
     }
 
     String generateDate(int days) {
