@@ -18,9 +18,6 @@ import static com.codeborne.selenide.Selenide.open;
 public class CardDeliveryFormTest {
 
 
-    DataGenerator dataGenerator = new DataGenerator();
-
-
     @BeforeEach
     void setup() {
         open("http://localhost:9999");
@@ -31,12 +28,12 @@ public class CardDeliveryFormTest {
     public void shouldFormTest() throws InterruptedException {
 
 
-        $("[placeholder='Город']").setValue(dataGenerator.getCity());
+        $("[placeholder='Город']").setValue(DataGenerator.generateCity("ru"));
         $("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
-        String planningDate = generateDate(4);
+        String planningDate = DataGenerator.generateDate(4);
         $("[data-test-id=date] input").setValue(planningDate);
-        $("[data-test-id=name] input").setValue(dataGenerator.getLastName() + " " + dataGenerator.getFirstName());
-        $("[data-test-id=phone] input").setValue(dataGenerator.getPhone());
+        $("[data-test-id=name] input").setValue(DataGenerator.generateLastName("ru") + " " + DataGenerator.generateFirstName("ru"));
+        $("[data-test-id=phone] input").setValue(DataGenerator.generatePhone("ru"));
         $(".checkbox__box").click();
         $(".button__text").click();
         $("[data-test-id='success-notification'] [class='notification__title']").shouldHave(text("Успешно"),
@@ -44,7 +41,7 @@ public class CardDeliveryFormTest {
         $(".notification__content").shouldBe(visible, Duration.ofSeconds(15))
                 .shouldHave(text("Встреча успешно запланирована на " + planningDate));
         $("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
-        planningDate = generateDate(7);
+        planningDate = DataGenerator.generateDate(7);
         $("[data-test-id=date] input").setValue(planningDate);
         $(".button__text").click();
         $(byText("Перепланировать")).shouldBe(visible, Duration.ofSeconds(15)).click();
@@ -55,12 +52,12 @@ public class CardDeliveryFormTest {
     @Test
     public void shouldFormTestSameDate() throws InterruptedException {
 
-        $("[placeholder='Город']").setValue(dataGenerator.getCity());
+        $("[placeholder='Город']").setValue(DataGenerator.generateCity("ru"));
         $("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
-        String planningDate = generateDate(4);
+        String planningDate = DataGenerator.generateDate(4);
         $("[data-test-id=date] input").setValue(planningDate);
-        $("[data-test-id=name] input").setValue(dataGenerator.getLastName() + " " + dataGenerator.getFirstName());
-        $("[data-test-id=phone] input").setValue(dataGenerator.getPhone());
+        $("[data-test-id=name] input").setValue(DataGenerator.generateLastName("ru") + " " + DataGenerator.generateFirstName("ru"));
+        $("[data-test-id=phone] input").setValue(DataGenerator.generatePhone("ru"));
         $(".checkbox__box").click();
         $(".button__text").click();
         $("[data-test-id='success-notification'] [class='notification__title']").shouldHave(text("Успешно"),
@@ -68,14 +65,11 @@ public class CardDeliveryFormTest {
         $(".notification__content").shouldBe(visible, Duration.ofSeconds(15))
                 .shouldHave(text("Встреча успешно запланирована на " + planningDate));
         $("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
-        planningDate = generateDate(4);
+        planningDate = DataGenerator.generateDate(4);
         $("[data-test-id=date] input").setValue(planningDate);
         $(".button__text").click();
         $("[data-test-id=replan-notification] .notification__content")
                 .shouldHave(text("У вас уже запланирована встреча на " + planningDate));
     }
 
-    String generateDate(int days) {
-        return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-    }
 }
